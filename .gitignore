@@ -1,0 +1,48 @@
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# PHP specific
+*.log
+*.cache
+/vendor/
+composer.lock
+
+# Configuration files with sensitive data
+config/database.php
+config/config.local.php
+.env
+.env.local
+
+# Temporary files
+tmp/
+temp/
+cache/
+
+
+# XAMPP specific
+.htaccess.bak
+error.log
+access.log
+
+# OS generated files
+.directory
+desktop.ini
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+*.7z

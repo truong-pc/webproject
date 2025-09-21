@@ -1,0 +1,134 @@
+/* ===== Green Theme (Bootstrap override + utilities) ===== */
+
+/* Dải xanh lá – đậm -> nhạt */
+:root{
+  --g-900:#064e3b;
+  --g-800:#065f46;
+  --g-700:#047857;
+  --g-600:#059669; /* hover */
+  --g-500:#10b981; /* primary */
+  --g-400:#34d399;
+  --g-300:#6ee7b7;
+  --g-200:#a7f3d0;
+  --g-100:#d1fae5;
+  --g-50:#ecfdf5;
+
+  --text:#0f172a;
+  --muted:#6b7280;
+  --surface:#ffffff;
+  --border:#e5e7eb;
+
+  /* Override Bootstrap */
+  --bs-primary: var(--g-500);
+  --bs-primary-rgb: 16,185,129;
+  --bs-success: var(--g-600);
+}
+
+/* Tổng thể dịu mắt */
+body{ background: var(--g-50); color: var(--text); }
+
+/* Navbar xanh lá gradient */
+.navbar-green{
+  position: relative;
+  background: transparent;
+  isolation: isolate;
+}
+.navbar-green::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: url('../img/header.jpg') center/cover no-repeat;
+  z-index:-2;
+}
+.navbar-green::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: linear-gradient(90deg, rgba(6,95,70,.7), rgba(16,185,129,.65));
+  z-index:-1;
+}
+.navbar-green .container{ position: relative; z-index:1; }
+.navbar-green .nav-link,
+.navbar-green .navbar-brand { color:#fff; }
+.navbar-green .nav-link.active,
+.navbar-green .nav-link:focus,
+.navbar-green .nav-link:hover{ color:#ecfdf5; }
+
+/* Hero gradient xanh lá */
+.hero-green{
+  position: relative; min-height: 60vh; display:grid; place-items:center; text-align:center; color:#fff;
+  background: url('../img/header.jpg') center/cover no-repeat;
+  isolation: isolate;
+}
+.hero-green::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: linear-gradient(180deg, rgba(6,95,70,.75), rgba(16,185,129,.7));
+  z-index:-1;
+}
+
+.hero-green .hero-content{ position: relative; z-index:0; }
+.hero-green .btn-cta{ background:#fff; color:var(--g-700); border:none; }
+.hero-green .btn-cta:hover{ background:var(--g-100); }
+
+/* Card nhẹ nhàng */
+.card{
+  border:1px solid var(--border);
+  border-radius:14px;
+  box-shadow:0 8px 20px rgba(0,0,0,.04);
+}
+.card-title{ color: var(--g-800); }
+
+/* Button xanh lá */
+.btn-primary{
+  background: linear-gradient(180deg, var(--g-500), var(--g-600));
+  border:none;
+}
+.btn-primary:hover{
+  background: linear-gradient(180deg, var(--g-600), var(--g-700));
+}
+.btn-outline-primary{
+  color: var(--g-700);
+  border-color: var(--g-400);
+}
+.btn-outline-primary:hover{
+  background: var(--g-50);
+  border-color: var(--g-500);
+  color: var(--g-800);
+}
+.btn-success{
+  background: linear-gradient(180deg, var(--g-600), var(--g-700));
+  border:none;
+}
+
+/* Badge trạng thái */
+.badge.bg-info{ background-color: var(--g-400) !important; color:#064e3b; }
+.badge.bg-success{ background-color: var(--g-600) !important; }
+.badge.bg-warning{ background-color:#f59e0b !important; color:#111827; }
+
+/* Focus ring dễ thấy (a11y) */
+:focus-visible{ outline:3px solid var(--g-400); outline-offset:2px; }
+
+/* Footer xanh đậm */
+.footer-green{
+  background: linear-gradient(90deg, var(--g-800), var(--g-700));
+  color:#ecfdf5;
+}
+/* ===== Page Bar (section title) ===== */
+.pagebar {
+  border: 1px solid var(--g-100);
+  background: linear-gradient(90deg, var(--g-100), transparent 70%);
+}
+.pagebar .title {
+  color: var(--g-800);
+  margin: 0;
+}
+.pagebar .subtitle {
+  color: var(--muted);
+  margin: 0;
+  font-size: .95rem;
+}
+.pagebar .actions .btn {
+  white-space: nowrap;
+}
