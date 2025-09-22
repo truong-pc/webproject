@@ -29,6 +29,7 @@ body{ background: var(--g-50); color: var(--text); }
 
 /* Navbar xanh lá gradient */
 .navbar-green{
+  z-index: 100;
   position: relative;
   background: transparent;
   isolation: isolate;
@@ -37,7 +38,7 @@ body{ background: var(--g-50); color: var(--text); }
   content:"";
   position:absolute;
   inset:0;
-  background: url('../img/header.jpg') center/cover no-repeat;
+  /* background: url('../img/header.jpg') center/cover no-repeat; */
   z-index:-2;
 }
 .navbar-green::after{
