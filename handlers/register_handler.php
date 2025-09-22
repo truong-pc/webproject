@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../config/connect.php';
+// require_once __DIR__ . '/../config/connect_db.php';
 require_once __DIR__ . '/../includes/functions.php';
 
 function handleRegistration() {
@@ -13,9 +13,9 @@ function handleRegistration() {
     
     // Sanitize and collect input data
     $data = [
-        'first_name' => sanitizeInput($_POST['first_name'] ?? ''),
-        'last_name' => sanitizeInput($_POST['last_name'] ?? ''),
+        'full_name' => sanitizeInput($_POST['full_name'] ?? ''),
         'email' => sanitizeInput($_POST['email'] ?? ''),
+        'password' => $_POST['password'] ?? '', // Don't sanitize password
         'phone' => sanitizeInput($_POST['phone'] ?? ''),
         'dob' => sanitizeInput($_POST['dob'] ?? ''),
         'license_number' => sanitizeInput($_POST['license_number'] ?? ''),
@@ -25,16 +25,10 @@ function handleRegistration() {
     
     
     // Validation rules
-    if (empty($data['first_name'])) {
-        $errors[] = 'First name is required';
-    } elseif (strlen($data['first_name']) < 2) {
-        $errors[] = 'First name must be at least 2 characters';
-    }
-    
-    if (empty($data['last_name'])) {
-        $errors[] = 'Last name is required';
-    } elseif (strlen($data['last_name']) < 2) {
-        $errors[] = 'Last name must be at least 2 characters';
+    if (empty($data['full_name'])) {
+        $errors[] = 'Full name is required';
+    } elseif (strlen($data['full_name']) < 3) {
+        $errors[] = 'Full name must be at least 3 characters';
     }
     
     if (empty($data['email'])) {
@@ -43,6 +37,12 @@ function handleRegistration() {
         $errors[] = 'Please enter a valid email address';
     } elseif (emailExists($data['email'])) {
         $errors[] = 'This email is already registered';
+    }
+    
+    if (empty($data['password'])) {
+        $errors[] = 'Password is required';
+    } elseif (strlen($data['password']) < 6) {
+        $errors[] = 'Password must be at least 6 characters';
     }
     
     // Optional phone validation
@@ -83,7 +83,7 @@ function handleRegistration() {
     
     return [
         'errors' => $errors,
-        'data' => $data,
+        'data' => array_diff_key($data, ['password' => '']), // Don't return password
         'success' => $success
     ];
 }

@@ -42,20 +42,21 @@ if ($success) {
         <div class="card-body">
           <form method="post" action="">
             <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label">First name <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" name="first_name" 
-                       value="<?= htmlspecialchars($data['first_name'] ?? '') ?>" required>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Last name <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" name="last_name" 
-                       value="<?= htmlspecialchars($data['last_name'] ?? '') ?>" required>
+              <div class="col-12">
+                <label class="form-label">Full name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="full_name" 
+                       value="<?= htmlspecialchars($data['full_name'] ?? '') ?>" 
+                       placeholder="Enter your full name" required>
               </div>
               <div class="col-md-6">
                 <label class="form-label">Email <span class="text-danger">*</span></label>
                 <input type="email" class="form-control" name="email" 
                        value="<?= htmlspecialchars($data['email'] ?? '') ?>" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Password <span class="text-danger">*</span></label>
+                <input type="password" class="form-control" name="password" 
+                       placeholder="Minimum 6 characters" required>
               </div>
               <div class="col-md-6">
                 <label class="form-label">Phone</label>
@@ -72,13 +73,13 @@ if ($success) {
                 <input type="text" class="form-control" name="license_number" 
                        value="<?= htmlspecialchars($data['license_number'] ?? '') ?>" placeholder="Optional">
               </div>
-              <div class="col-12">
+              <div class="col-md-6">
                 <label class="form-label">Address</label>
                 <input type="text" class="form-control" name="address" 
                        value="<?= htmlspecialchars($data['address'] ?? '') ?>" placeholder="Full address (optional)">
               </div>
             </div>
-            <button type="submit" class="btn btn-success w-100 mt-3">Create Account</button>
+            <button type="submit" class="btn btn-success w-100 mt-4">Create Account</button>
           </form>
           <div class="text-center mt-3">
             <small>Already have an account? <a href="login.php">Sign in here</a></small>

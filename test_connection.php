@@ -1,6 +1,6 @@
 <?php
 // test_connection.php - Test database connection
-require_once 'config/connect.php';
+require_once 'config/connect_db.php';
 
 echo "<h2>🔍 Database Connection Test</h2>";
 echo "<hr>";

@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../config/connect.php';
+// require_once __DIR__ . '/../config/connect_db.php';
 require_once __DIR__ . '/../includes/functions.php';
 
 function handleLogin() {

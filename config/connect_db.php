@@ -1,6 +1,5 @@
 <?php
-// config/connect.php
-// Centralised MySQL connection helper for the Origin Driving project.
+// config/connect_db.php
 
 $DB_CONFIG = [
     'host' => '127.0.0.1',

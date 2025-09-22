@@ -1,6 +1,6 @@
 <?php
 // test_create_student.php - Test createStudent function
-require_once 'config/connect.php';
+require_once 'config/connect_db.php';
 require_once 'includes/functions.php';
 
 echo "<h2>🧪 Test createStudent() Function</h2>";

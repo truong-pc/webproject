@@ -1,4 +1,14 @@
 <?php
+/**
+ * Central functions file cho Origin Driving School
+ * 
+ * File này là SINGLE SOURCE cho:
+ * - Database connection (qua function db())
+ * - Tất cả helper functions
+ * 
+ * Các file khác CHỈ CẦN require file này, KHÔNG require connect_db.php trực tiếp
+ */
+require_once __DIR__ . '/../config/connect_db.php';
 
 /**
  * Validation và helper functions cho Origin Driving School
@@ -45,8 +55,8 @@ function createStudent($data) {
             VALUES ('student', ?, ?, ?, ?, '1', 'active')
         ");
         
-        $full_name = trim($data['first_name'] . ' ' . $data['last_name']);
-        $password_hash = password_hash('admin', PASSWORD_DEFAULT); // Default password: admin
+        $full_name = trim($data['full_name']);
+        $password_hash = password_hash($data['password'], PASSWORD_DEFAULT);
 
         $stmt->execute([
             $full_name,
@@ -185,3 +195,33 @@ function sanitizeInput($data) {
     }
     return trim(htmlspecialchars($data, ENT_QUOTES, 'UTF-8'));
 }
+
+/**
+ * Get all students with pagination
+ */
+function getInfoStudents($limit = 100, $offset = 0) {
+    $pdo = db();
+    
+    // Validate và sanitize parameters
+    $limit = (int) $limit;
+    $offset = (int) $offset;
+    
+    // Build query với concatenation cho LIMIT/OFFSET
+    $sql = "
+        SELECT u.id, u.name, u.email, u.phone, u.status, u.created_at,
+               s.license_status, b.name AS branch_name
+        FROM users u
+        LEFT JOIN students s ON s.user_id = u.id
+        LEFT JOIN branches b ON b.id = u.branch_id
+        WHERE u.role = 'student'
+        ORDER BY u.created_at DESC
+        LIMIT {$limit} OFFSET {$offset}
+    ";
+    
+    $stmt = $pdo->query($sql);
+    return $stmt->fetchAll();
+}
+
+
+
+

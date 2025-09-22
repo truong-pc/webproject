@@ -13,8 +13,8 @@
     <?php include __DIR__.'/partials/header.php'; ?>
 
     <?php
-      require __DIR__ . '/config/connect.php';
-      $pdo = db();
+      
+      $students = getInfoStudents();
 
       $page_title = 'Students';
       $page_subtitle = 'Register, view and manage student profiles';
@@ -22,19 +22,8 @@
         ['href'=>'register.php','text'=>'+ Add Student','class'=>'btn btn-success'],
         ['href'=>'#','text'=>'Export CSV','class'=>'btn btn-outline-primary']
       ];
+      
       include __DIR__.'/partials/pagebar.php';
-
-      $stmt = $pdo->query(
-        "SELECT u.id, u.name, u.email, u.phone, u.status, u.created_at,
-                s.license_status, b.name AS branch_name
-         FROM users u
-         LEFT JOIN students s   ON s.user_id = u.id
-         LEFT JOIN branches b   ON b.id = u.branch_id
-         WHERE u.role = 'student'
-         ORDER BY u.created_at DESC
-         LIMIT 100"
-      );
-      $students = $stmt->fetchAll();
 
       $badgeClass = static function (string $status): string {
         return match ($status) {
