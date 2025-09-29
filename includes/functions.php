@@ -174,13 +174,20 @@ function logoutUser() {
  */
 function getRedirectUrl($role) {
     switch ($role) {
+        // ADMIN và STAFF (nếu có) được chuyển hướng đến Dashboard tổng quan
         case 'admin':
         case 'staff':
-            return 'reports.php';
+            return 'admin.php'; // <--- TRANG ADMIN MỚI
+            
+        // INSTRUCTOR được chuyển hướng đến trang Lịch của họ
         case 'instructor':
             return 'schedule.php';
+            
+        // STUDENT được chuyển hướng đến trang Lịch của họ
         case 'student':
-            return 'students.php';
+            return 'schedule.php';
+            
+        // Các vai trò khác hoặc mặc định
         default:
             return 'index.php';
     }
@@ -220,6 +227,61 @@ function getInfoStudents($limit = 100, $offset = 0) {
     
     $stmt = $pdo->query($sql);
     return $stmt->fetchAll();
+}
+
+
+/**
+ * Get upcoming lessons for a specific student
+ * Assumptions: there is a `schedule` table with columns: id, start_time, student_id, instructor_id, vehicle_id, status
+ * and `users` table contains student/instructor names. This function is defensive if vehicle or instructor missing.
+ *
+ * @param int $studentId
+ * @param int $limit
+ * @return array
+ */
+function getUpcomingLessons(int $studentId, int $limit = 5): array {
+    $pdo = db();
+
+    $sql = "
+        SELECT s.id, s.start_time, s.status,
+               stu.name AS student_name,
+               inst.name AS instructor_name,
+               v.reg_number AS vehicle_reg
+        FROM schedule s
+        LEFT JOIN users stu ON stu.id = s.student_id
+        LEFT JOIN users inst ON inst.id = s.instructor_id
+        LEFT JOIN vehicles v ON v.id = s.vehicle_id
+        WHERE s.student_id = :student_id AND s.start_time >= NOW()
+        ORDER BY s.start_time ASC
+        LIMIT :limit
+    ";
+
+    try {
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':student_id', $studentId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    } catch (Exception $e) {
+        // In case the assumed schema does not exist, return empty array
+        return [];
+    }
+}
+
+/**
+ * Fetch student-specific details from students table by user_id
+ * Returns associative array with keys e.g. license_status, notes_summary
+ */
+function getStudentByUserId(int $userId): array {
+    $pdo = db();
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM students WHERE user_id = ? LIMIT 1");
+        $stmt->execute([$userId]);
+        $row = $stmt->fetch();
+        return $row ?: [];
+    } catch (Exception $e) {
+        return [];
+    }
 }
 
 

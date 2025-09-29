@@ -1,4 +1,16 @@
 <?php $title = 'Instructors'; ?>
+// Tệp: instructors.php (Thêm sau các require_once)
+
+require_once __DIR__ . '/includes/functions.php'; // Đảm bảo đã có
+
+safeSessionStart();
+$role = getCurrentUser()['role'] ?? '';
+
+// Chỉ cho phép ADMIN và STUDENT truy cập
+if (!isLoggedIn() || ($role !== 'admin' && $role !== 'student')) {
+    http_response_code(403);
+    exit('Access Denied: Only Admin or Student can view this page.');
+}
 <!doctype html>
 <html lang="en">
   <head>
