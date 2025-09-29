@@ -1,16 +1,22 @@
-<?php $title = 'Instructors'; ?>
-// Tệp: instructors.php (Thêm sau các require_once)
-
-require_once __DIR__ . '/includes/functions.php'; // Đảm bảo đã có
+<?php 
+$title = 'Instructors'; 
+require_once __DIR__ . '/includes/functions.php';
 
 safeSessionStart();
-$role = getCurrentUser()['role'] ?? '';
+if (!isLoggedIn()) {
+    header('Location: login.php');
+    exit;
+}
+
+$currentUser = getCurrentUser();
+$role = $currentUser['role'];
 
 // Chỉ cho phép ADMIN và STUDENT truy cập
-if (!isLoggedIn() || ($role !== 'admin' && $role !== 'student')) {
+if ($role !== 'admin' && $role !== 'student') {
     http_response_code(403);
-    exit('Access Denied: Only Admin or Student can view this page.');
+    exit('Access Denied: Only Admin or Student can view instructor information.');
 }
+?>
 <!doctype html>
 <html lang="en">
   <head>
@@ -25,18 +31,58 @@ if (!isLoggedIn() || ($role !== 'admin' && $role !== 'student')) {
     <?php include __DIR__.'/partials/header.php'; ?>
 
     <?php
-      $page_title = 'Instructors';
-      $page_subtitle = 'Profiles, qualifications and teaching schedules';
-      $page_actions = [
-        ['href'=>'#','text'=>'+ Add Instructor','class'=>'btn btn-success']
-      ];
+      $page_title = 'Instructor Profiles';
+      $page_subtitle = $role === 'admin' ? 
+        'Manage instructor qualifications, schedules and performance' : 
+        'View instructor information and availability';
+      $page_actions = ($role === 'admin') ? [
+        ['href'=>'test_create_account.php','text'=>'+ Add Instructor','class'=>'btn btn-success']
+      ] : [];
       include __DIR__.'/partials/pagebar.php';
     ?>
 
     <main class="container my-3">
-      <!-- nội dung TODO -->
       <div class="card"><div class="card-body">
-        <p class="text-muted mb-3">TODO: list instructors with rating & availability.</p>
+        <h5 class="card-title">Instructor List</h5>
+        <p class="text-muted mb-3">
+          <?= $role === 'admin' ? 
+              'Manage instructor profiles, qualifications and ratings.' : 
+              'View instructor qualifications and availability for booking.' 
+          ?>
+        </p>
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead><tr><th>Name</th><th>Qualification</th><th>Rating</th><th>Status</th><th>Availability</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td>John Doe</td>
+                <td>Cert IV Driver Training</td>
+                <td>⭐⭐⭐⭐⭐ (4.8)</td>
+                <td><span class="badge bg-success">Active</span></td>
+                <td>Mon-Fri 9AM-5PM</td>
+                <td class="text-end">
+                  <?= $role === 'admin' ? 
+                      '<a href="#" class="btn btn-sm btn-primary">Edit</a>' : 
+                      '<a href="#" class="btn btn-sm btn-outline-primary">Book Lesson</a>' 
+                  ?>
+                </td>
+              </tr>
+              <tr>
+                <td>Maria Smith</td>
+                <td>Cert IV Driver Training</td>
+                <td>⭐⭐⭐⭐⭐ (4.9)</td>
+                <td><span class="badge bg-success">Active</span></td>
+                <td>Tue-Sat 8AM-4PM</td>
+                <td class="text-end">
+                  <?= $role === 'admin' ? 
+                      '<a href="#" class="btn btn-sm btn-primary">Edit</a>' : 
+                      '<a href="#" class="btn btn-sm btn-outline-primary">Book Lesson</a>' 
+                  ?>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div></div>
     </main>
 

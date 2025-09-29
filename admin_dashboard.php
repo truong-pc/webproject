@@ -1,5 +1,5 @@
 <?php 
-// admin.php - Central Admin Dashboard
+//Central Admin Dashboard
 
 $title = 'Admin Dashboard'; 
 require_once __DIR__ . '/includes/functions.php';

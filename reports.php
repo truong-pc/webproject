@@ -1,13 +1,13 @@
-<?php $title = 'Reports'; ?>
-// Tệp: reports.php & invoices.php (Thêm sau các require_once)
-
-require_once __DIR__ . '/includes/functions.php'; // Đảm bảo đã có
+<?php 
+$title = 'Reports';
+require_once __DIR__ . '/includes/functions.php';
 
 safeSessionStart();
 if (!isLoggedIn() || getCurrentUser()['role'] !== 'admin') {
     http_response_code(403);
-    exit('Access Denied: Only Admin can view this page.');
+    exit('Access Denied: Only Admin can view reports.');
 }
+?>
 <!doctype html>
 <html lang="en">
   <head>

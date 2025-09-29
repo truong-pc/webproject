@@ -90,7 +90,7 @@ function createStudent($data) {
 }
 
 /**
- * Authenticate user login
+ * Authenticate user login - CHỈ HỖ TRỢ 3 ROLES
  */
 function authenticateUser($email, $password) {
     $pdo = db();
@@ -110,6 +110,12 @@ function authenticateUser($email, $password) {
     
     if ($user['status'] !== 'active') {
         return ['success' => false, 'message' => 'Account is inactive'];
+    }
+    
+    // Chỉ cho phép 3 loại role: admin, instructor, student
+    $allowedRoles = ['admin', 'instructor', 'student'];
+    if (!in_array($user['role'], $allowedRoles)) {
+        return ['success' => false, 'message' => 'Account role not supported'];
     }
     
     if (!password_verify($password, $user['password_hash'])) {
@@ -170,24 +176,16 @@ function logoutUser() {
 }
 
 /**
- * Redirect based on user role
+ * Redirect based on user role 
  */
 function getRedirectUrl($role) {
     switch ($role) {
-        // ADMIN và STAFF (nếu có) được chuyển hướng đến Dashboard tổng quan
         case 'admin':
-        case 'staff':
-            return 'admin.php'; // <--- TRANG ADMIN MỚI
-            
-        // INSTRUCTOR được chuyển hướng đến trang Lịch của họ
+            return 'admin_dashboard.php';
         case 'instructor':
             return 'schedule.php';
-            
-        // STUDENT được chuyển hướng đến trang Lịch của họ
         case 'student':
             return 'schedule.php';
-            
-        // Các vai trò khác hoặc mặc định
         default:
             return 'index.php';
     }
@@ -284,6 +282,64 @@ function getStudentByUserId(int $userId): array {
     }
 }
 
+/**
+ * Create a new user account with specified role - CHỈ HỖ TRỢ 3 ROLES
+ */
+function createUserWithRole($data) {
+    $pdo = db();
+    
+    // Validate role - chỉ cho phép 3 roles
+    $allowedRoles = ['admin', 'instructor', 'student'];
+    if (!in_array($data['role'], $allowedRoles)) {
+        return ['success' => false, 'error' => 'Invalid role. Only admin, instructor, student are allowed.'];
+    }
+    
+    try {
+        $pdo->beginTransaction();
+        
+        // Insert into users table with specified role
+        $stmt = $pdo->prepare("
+            INSERT INTO users (role, name, email, phone, password_hash, branch_id, status) 
+            VALUES (?, ?, ?, ?, ?, ?, 'active')
+        ");
+        
+        $full_name = trim($data['full_name']);
+        $password_hash = password_hash($data['password'], PASSWORD_DEFAULT);
+        $role = $data['role'];
+        $branch_id = $data['branch_id'] ?? 1;
 
-
-
+        $stmt->execute([
+            $role,
+            $full_name,
+            $data['email'],
+            $data['phone'] ?? null,
+            $password_hash,
+            $branch_id
+        ]);
+        
+        $user_id = $pdo->lastInsertId();
+        
+        // Insert vào bảng con tương ứng dựa trên role
+        if ($role === 'student') {
+            // Insert vào students table
+            $stmt = $pdo->prepare("
+                INSERT INTO students (user_id, license_status, notes_summary) 
+                VALUES (?, 'none', ?)
+            ");
+            $notes = "Test student account created via test interface";
+            $stmt->execute([$user_id, $notes]);
+        } elseif ($role === 'instructor') {
+            // Insert vào instructors table (nếu có)
+            // Tạm thời skip vì chưa rõ cấu trúc bảng instructors
+            // Có thể thêm sau
+        }
+        // Admin chỉ cần record trong users table
+        
+        $pdo->commit();
+        return ['success' => true, 'user_id' => $user_id, 'role' => $role];
+        
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        return ['success' => false, 'error' => $e->getMessage()];
+    }
+}
