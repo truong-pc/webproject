@@ -41,15 +41,15 @@ function handleRegistration() {
     
     if (empty($data['password'])) {
         $errors[] = 'Password is required';
-    } elseif (strlen($data['password']) < 6) {
-        $errors[] = 'Password must be at least 6 characters';
     }
     
-    // Optional phone validation
+    // Phone validation (allow only digits, 10-15 length)
     if (!empty($data['phone'])) {
-        $phone = preg_replace('/[^0-9]/', '', $data['phone']);
-        if (strlen($phone) < 10) {
-            $errors[] = 'Please enter a valid phone number';
+        $normalized = preg_replace('/\s+/', '', $data['phone']); // remove spaces
+        if (!preg_match('/^\d{10,15}$/', $normalized)) {
+            $errors[] = 'Phone must contain only digits (10-15 numbers)';
+        } else {
+            $data['phone'] = $normalized; // store normalized phone
         }
     }
     

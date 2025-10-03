@@ -121,16 +121,7 @@ if ($success) {
                        placeholder="Enter phone number (optional)">
               </div>
 
-              <!-- Branch ID -->
-              <div class="col-12">
-                <label class="form-label">Branch ID</label>
-                <select class="form-select" name="branch_id">
-                  <option value="1" <?= ($data['branch_id'] ?? '1') === '1' ? 'selected' : '' ?>>Branch 1 (Main)</option>
-                  <option value="2" <?= ($data['branch_id'] ?? '1') === '2' ? 'selected' : '' ?>>Branch 2</option>
-                  <option value="3" <?= ($data['branch_id'] ?? '1') === '3' ? 'selected' : '' ?>>Branch 3</option>
-                </select>
-                <div class="form-text">Select the branch for this account</div>
-              </div>
+              <!-- Branch removed (no longer used) -->
 
               <!-- Submit Button -->
               <div class="col-12 d-grid">

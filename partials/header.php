@@ -22,12 +22,12 @@ $currentUser = $isLoggedIn ? [
         <?php
         function active($p){ return basename($_SERVER['PHP_SELF']) === $p ? 'active' : ''; }
         ?>
-        <li class="nav-item"><a class="nav-link <?= active('index.php') ?>" href="index.php">Home</a></li>
 
 <?php if ($isLoggedIn): ?>
     <?php $role = $currentUser['role']; ?>
 
     <?php if ($role === 'admin'): ?>
+        <li class="nav-item"><a class="nav-link <?= active('admin_dashboard.php') ?>" href="admin_dashboard.php">Dashboard</a></li>
         <li class="nav-item"><a class="nav-link <?= active('students.php') ?>" href="students.php">Students</a></li>
         <li class="nav-item"><a class="nav-link <?= active('instructors.php') ?>" href="instructors.php">Instructors</a></li>
         <li class="nav-item"><a class="nav-link <?= active('vehicles.php') ?>" href="vehicles.php">Vehicles</a></li>
@@ -36,10 +36,12 @@ $currentUser = $isLoggedIn ? [
         <li class="nav-item"><a class="nav-link <?= active('reports.php') ?>" href="reports.php">Reports</a></li>
 
     <?php elseif ($role === 'instructor'): ?>
+        <li class="nav-item"><a class="nav-link <?= active('index.php') ?>" href="index.php">Home</a></li>
         <li class="nav-item"><a class="nav-link <?= active('schedule.php') ?>" href="schedule.php">My Schedule</a></li>
         <li class="nav-item"><a class="nav-link <?= active('students.php') ?>" href="students.php">Students Info</a></li>
 
     <?php elseif ($role === 'student'): ?>
+        <li class="nav-item"><a class="nav-link <?= active('index.php') ?>" href="index.php">Home</a></li>
         <li class="nav-item"><a class="nav-link <?= active('schedule.php') ?>" href="schedule.php">My Schedule</a></li>
         <li class="nav-item"><a class="nav-link <?= active('instructors.php') ?>" href="instructors.php">Instructors Info</a></li>
         <li class="nav-item"><a class="nav-link <?= active('invoices.php') ?>" href="invoices.php">My Invoices</a></li> 

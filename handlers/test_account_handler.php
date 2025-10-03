@@ -16,9 +16,8 @@ function handleTestAccountCreation() {
         'full_name' => sanitizeInput($_POST['full_name'] ?? ''),
         'email' => sanitizeInput($_POST['email'] ?? ''),
         'password' => $_POST['password'] ?? '', // Không sanitize password
-        'role' => sanitizeInput($_POST['role'] ?? 'student'), // Mặc định là student
-        'phone' => sanitizeInput($_POST['phone'] ?? ''),
-        'branch_id' => sanitizeInput($_POST['branch_id'] ?? '1') // Mặc định branch 1
+    'role' => sanitizeInput($_POST['role'] ?? 'student'), // Mặc định là student
+    'phone' => sanitizeInput($_POST['phone'] ?? '')
     ];
     
     // Validation rules
@@ -46,11 +45,13 @@ function handleTestAccountCreation() {
         $errors[] = 'Invalid role selected. Only admin, instructor, student are allowed.';
     }
     
-    // Optional phone validation
+    // Phone validation (digits only 10-15)
     if (!empty($data['phone'])) {
-        $phone = preg_replace('/[^0-9]/', '', $data['phone']);
-        if (strlen($phone) < 10) {
-            $errors[] = 'Please enter a valid phone number';
+        $normalized = preg_replace('/\s+/', '', $data['phone']);
+        if (!preg_match('/^\d{10,15}$/', $normalized)) {
+            $errors[] = 'Phone must be 10-15 digits (numbers only)';
+        } else {
+            $data['phone'] = $normalized;
         }
     }
     

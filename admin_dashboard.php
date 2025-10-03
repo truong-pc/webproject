@@ -58,7 +58,25 @@ $page_actions = [
   <body>
     <?php include __DIR__.'/partials/header.php'; ?>
 
-    <?php include __DIR__.'/partials/pagebar.php'; ?>
+    <div class="pagebar py-3 mb-3">
+    <div class="container d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-2">
+        <div>
+        <h1 class="title h4"><?= htmlspecialchars($page_title ?? 'Page') ?></h1>
+        <?php if (!empty($page_subtitle)): ?>
+            <p class="subtitle"><?= htmlspecialchars($page_subtitle) ?></p>
+        <?php endif; ?>
+        </div>
+        <?php if (!empty($page_actions) && is_array($page_actions)): ?>
+        <div class="actions d-flex gap-2">
+            <?php foreach($page_actions as $btn): ?>
+            <a href="<?= htmlspecialchars($btn['href'] ?? '#') ?>" class="<?= htmlspecialchars($btn['class'] ?? 'btn btn-primary') ?>">
+                <?= htmlspecialchars($btn['text'] ?? 'Action') ?>
+            </a>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+    </div>
+    </div>
 
     <main class="container my-3">
         

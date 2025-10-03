@@ -42,7 +42,6 @@ $logged_out = isset($_GET['logged_out']) && $_GET['logged_out'] == '1';
       <?php if ($registered): ?>
         <div class="alert alert-success">
           <h6 class="alert-heading mb-1">Registration successful!</h6>
-          <p class="mb-0">Your account has been created. You can now sign in with your email and the default password: <code>student123</code></p>
         </div>
       <?php endif; ?>
       
@@ -73,9 +72,6 @@ $logged_out = isset($_GET['logged_out']) && $_GET['logged_out'] == '1';
             <div class="mb-3">
               <label class="form-label">Password</label>
               <input type="password" class="form-control" name="password" required>
-              <div class="form-text">
-                For new students, the default password is: <code>student123</code>
-              </div>
             </div>
             <button type="submit" class="btn btn-primary w-100">Sign In</button>
           </form>

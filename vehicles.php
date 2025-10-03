@@ -3,10 +3,19 @@
 require_once __DIR__ . '/includes/functions.php';
 
 safeSessionStart();
-if (!isLoggedIn() || getCurrentUser()['role'] !== 'admin') {
-    http_response_code(403);
-    exit('Access Denied: Only Admin can manage vehicles.');
+$currentUser = getCurrentUser();
+if (!isLoggedIn() || ($currentUser['role'] ?? null) !== 'admin') {
+  http_response_code(403);
+  exit('Access Denied: Only Admin can manage vehicles.');
 }
+
+$page_title = 'Vehicle Management';
+$page_subtitle = 'Manage the fleet of training vehicles.';
+$primary_action = [
+  'href' => '#',
+  'text' => '+ Add Vehicle',
+  'class' => 'btn btn-success'
+];
 ?>
 <!doctype html>
 <html lang="en">
@@ -21,14 +30,19 @@ if (!isLoggedIn() || getCurrentUser()['role'] !== 'admin') {
   <body>
     <?php include __DIR__.'/partials/header.php'; ?>
 
-    <?php
-      $page_title = 'Vehicle Management';
-      $page_subtitle = 'Manage the fleet of training vehicles.';
-      $page_actions = [
-        ['href'=>'#','text'=>'+ Add Vehicle','class'=>'btn btn-success']
-      ];
-      include __DIR__.'/partials/pagebar.php';
-    ?>
+    <div class="pagebar py-3 mb-3">
+      <div class="container d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-2">
+        <div>
+          <h1 class="title h4"><?= htmlspecialchars($page_title) ?></h1>
+          <p class="subtitle mb-0"><?= htmlspecialchars($page_subtitle) ?></p>
+        </div>
+        <div class="actions d-flex gap-2">
+          <a href="<?= htmlspecialchars($primary_action['href']) ?>" class="<?= htmlspecialchars($primary_action['class']) ?>">
+            <?= htmlspecialchars($primary_action['text']) ?>
+          </a>
+        </div>
+      </div>
+    </div>
 
     <main class="container my-3">
         <div class="card"><div class="card-body">
