@@ -128,7 +128,6 @@ $badgeClass = static function (string $status): string {
                 <h1 class="title h4">Students</h1>
                 <div class="actions d-flex gap-2">
                     <a href="register.php" class="btn btn-success">+ Add Student</a>
-                    <a href="#" class="btn btn-outline-primary">Export CSV</a>
                 </div>
         </div>
     </div>
@@ -180,7 +179,6 @@ $badgeClass = static function (string $status): string {
                                 <th>Phone</th>
                                 <th>Account Status</th>
                                 <th>License</th>
-                                <th class="text-center">Enrollments</th>
                                 <th class="text-end">Actions</th>
                             </tr>
                         </thead>
@@ -206,9 +204,6 @@ $badgeClass = static function (string $status): string {
                                                 <?= htmlspecialchars($licenseOptions[$student['license_status']] ?? ucfirst($student['license_status'] ?? 'none')) ?>
                                             </span>
                                         </td>
-                                        <td class="text-center">
-                                            <?= (int)($student['total_enrollments'] ?? 0) ?>
-                                        </td>
                                         <td class="text-end">
                                             <div class="btn-group" role="group">
                                                 <button
@@ -223,9 +218,6 @@ $badgeClass = static function (string $status): string {
                                                     data-student-license="<?= htmlspecialchars($student['license_status'] ?? 'none', ENT_QUOTES) ?>"
                                                     data-student-address="<?= htmlspecialchars($student['address'] ?? '', ENT_QUOTES) ?>"
                                                     data-student-notes="<?= htmlspecialchars($student['notes_summary'] ?? '', ENT_QUOTES) ?>"
-                                                    data-student-total="<?= (int)($student['total_enrollments'] ?? 0) ?>"
-                                                    data-student-active="<?= (int)($student['active_enrollments'] ?? 0) ?>"
-                                                    data-student-completed="<?= (int)($student['completed_enrollments'] ?? 0) ?>"
                                                     data-student-created="<?= htmlspecialchars($student['created_at'] ?? '', ENT_QUOTES) ?>"
                                                 >View</button>
                                                 <button type="button" class="btn btn-sm btn-outline-danger" data-student-id="<?= (int)$student['id'] ?>" data-student-name="<?= htmlspecialchars($student['name']) ?>" onclick="confirmDeleteStudent(this)">Delete</button>
@@ -253,9 +245,6 @@ $badgeClass = static function (string $status): string {
         'license_status' => 'none',
         'address' => '',
         'notes_summary' => '',
-        'total_enrollments' => 0,
-        'active_enrollments' => 0,
-        'completed_enrollments' => 0,
         'created_at' => null,
     ];
     $modalCreatedAt = $modalStudent['created_at'] ?? null;
@@ -315,16 +304,10 @@ $badgeClass = static function (string $status): string {
                             <textarea class="form-control" id="modalStudentNotes" name="notes_summary" rows="2"><?= htmlspecialchars($modalStudent['notes_summary'] ?? '') ?></textarea>
                         </div>
                         <div class="col-12">
-                            <dl class="row small text-muted mb-0">
-                                <dt class="col-sm-5">Created</dt>
-                                <dd class="col-sm-7" id="modalStudentCreatedDisplay"><?= htmlspecialchars($modalCreatedDisplay) ?></dd>
-                                <dt class="col-sm-5">Total Enrollments</dt>
-                                <dd class="col-sm-7" id="modalStudentTotalDisplay"><?= (int)($modalStudent['total_enrollments'] ?? 0) ?></dd>
-                                <dt class="col-sm-5">Active Enrollments</dt>
-                                <dd class="col-sm-7" id="modalStudentActiveDisplay"><?= (int)($modalStudent['active_enrollments'] ?? 0) ?></dd>
-                                <dt class="col-sm-5">Completed Enrollments</dt>
-                                <dd class="col-sm-7" id="modalStudentCompletedDisplay"><?= (int)($modalStudent['completed_enrollments'] ?? 0) ?></dd>
-                            </dl>
+                            <div class="small text-muted d-flex align-items-center gap-2 mb-0">
+                                <span>Created:</span>
+                                <span id="modalStudentCreatedDisplay"><?= htmlspecialchars($modalCreatedDisplay) ?></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -397,11 +380,9 @@ $badgeClass = static function (string $status): string {
                 notes: modalElement.querySelector('#modalStudentNotes'),
             };
             // References to read-only stats displayed in the modal footer.
+            // Read-only metadata fields displayed in the modal footer.
             const statRefs = {
                 created: modalElement.querySelector('#modalStudentCreatedDisplay'),
-                total: modalElement.querySelector('#modalStudentTotalDisplay'),
-                active: modalElement.querySelector('#modalStudentActiveDisplay'),
-                completed: modalElement.querySelector('#modalStudentCompletedDisplay'),
             };
 
             /** Format timestamps into a readable date string. */
@@ -431,9 +412,6 @@ $badgeClass = static function (string $status): string {
                 fieldRefs.notes.value = data.notes ?? '';
 
                 statRefs.created.textContent = formatDate(data.created);
-                statRefs.total.textContent = Number.parseInt(data.total ?? 0, 10) || 0;
-                statRefs.active.textContent = Number.parseInt(data.active ?? 0, 10) || 0;
-                statRefs.completed.textContent = Number.parseInt(data.completed ?? 0, 10) || 0;
             };
 
             /** Populate the modal with data and display it to the admin. */
@@ -455,9 +433,6 @@ $badgeClass = static function (string $status): string {
                         license: dataset.studentLicense || 'none',
                         address: dataset.studentAddress || '',
                         notes: dataset.studentNotes || '',
-                        total: dataset.studentTotal || 0,
-                        active: dataset.studentActive || 0,
-                        completed: dataset.studentCompleted || 0,
                         created: dataset.studentCreated || '',
                     });
                 });
@@ -474,9 +449,6 @@ $badgeClass = static function (string $status): string {
                 'license' => $modalStudent['license_status'] ?? 'none',
                 'address' => $modalStudent['address'] ?? '',
                 'notes' => $modalStudent['notes_summary'] ?? '',
-                'total' => (int)($modalStudent['total_enrollments'] ?? 0),
-                'active' => (int)($modalStudent['active_enrollments'] ?? 0),
-                'completed' => (int)($modalStudent['completed_enrollments'] ?? 0),
                 'created' => $modalStudent['created_at'] ?? '',
             ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>);
             <?php endif; ?>

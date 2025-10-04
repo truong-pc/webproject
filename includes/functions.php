@@ -100,10 +100,9 @@ function sanitizeInput($data){
 }
 
 /**
- * Paginated list of student users with aggregated stats (enrollments, invoices, etc.).
- * Returns associative arrays with keys: id, name, email, phone, status, created_at, updated_at,
- * license_status, address, notes_summary, total_enrollments, active_enrollments,
- * outstanding_balance, last_invoice_date.
+ * Paginated list of student users with their core profile fields.
+ * Returns: id, name, email, phone, status, created_at, updated_at,
+ *          license_status, address, notes_summary.
  */
 function getInfoStudents($limit=100,$offset=0){
     $pdo = db();
@@ -119,21 +118,10 @@ function getInfoStudents($limit=100,$offset=0){
                 u.created_at,
                 u.updated_at,
                 COALESCE(s.license_status, 'none') AS license_status,
-                s.address,
-                s.notes_summary,
-          COALESCE(enr.total_enrollments, 0) AS total_enrollments,
-          COALESCE(enr.active_enrollments, 0) AS active_enrollments,
-          COALESCE(enr.completed_enrollments, 0) AS completed_enrollments
+                                s.address,
+                                s.notes_summary
             FROM users u
             LEFT JOIN students s ON s.user_id = u.id
-            LEFT JOIN (
-                SELECT student_id,
-                       COUNT(*) AS total_enrollments,
-              SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) AS active_enrollments,
-              SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS completed_enrollments
-                FROM enrollments
-                GROUP BY student_id
-            ) enr ON enr.student_id = u.id
             WHERE u.role = 'student'
             ORDER BY u.created_at DESC
             LIMIT :limit OFFSET :offset";
@@ -146,7 +134,7 @@ function getInfoStudents($limit=100,$offset=0){
     return $stmt->fetchAll();
 }
 
-/** Fetch a single student's full profile (users + students + aggregates). */
+/** Fetch a single student's full profile (users + students tables only). */
 function getStudentDetails(int $studentId): ?array {
     $pdo = db();
     $sql = "SELECT
@@ -158,21 +146,10 @@ function getStudentDetails(int $studentId): ?array {
                 u.created_at,
                 u.updated_at,
                 COALESCE(s.license_status, 'none') AS license_status,
-                s.address,
-                s.notes_summary,
-                COALESCE(enr.total_enrollments, 0) AS total_enrollments,
-                COALESCE(enr.active_enrollments, 0) AS active_enrollments,
-                COALESCE(enr.completed_enrollments, 0) AS completed_enrollments
+                                s.address,
+                                s.notes_summary
             FROM users u
             LEFT JOIN students s ON s.user_id = u.id
-            LEFT JOIN (
-          SELECT student_id,
-              COUNT(*) AS total_enrollments,
-              SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) AS active_enrollments,
-              SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS completed_enrollments
-                FROM enrollments
-                GROUP BY student_id
-            ) enr ON enr.student_id = u.id
             WHERE u.role = 'student' AND u.id = :id
             LIMIT 1";
 
@@ -489,13 +466,24 @@ function getUpcomingLessons(int $studentId,int $limit=5):array{
           LEFT JOIN vehicles v ON v.id=s.vehicle_id
           WHERE s.student_id=:sid AND s.start_time>=NOW()
           ORDER BY s.start_time ASC LIMIT :lim";
-    try{ $st=$pdo->prepare($sql); $st->bindValue(':sid',$studentId,PDO::PARAM_INT); $st->bindValue(':lim',$limit,PDO::PARAM_INT); $st->execute(); return $st->fetchAll(); }catch(Exception $e){ return []; }
+    try{ $st=$pdo->prepare($sql);
+         $st->bindValue(':sid',$studentId,PDO::PARAM_INT);
+         $st->bindValue(':lim',$limit,PDO::PARAM_INT);
+         $st->execute(); return $st->fetchAll(); 
+        }catch(Exception $e){ 
+            return []; 
+        }
 }
 
 /** Student supplemental record by user_id (may return empty array) */
 function getStudentByUserId(int $userId):array{
     $pdo=db();
-    try{ $st=$pdo->prepare("SELECT * FROM students WHERE user_id=? LIMIT 1"); $st->execute([$userId]); $r=$st->fetch(); return $r?:[]; }catch(Exception $e){ return []; }
+    try{ $st=$pdo->prepare("SELECT * FROM students WHERE user_id=? LIMIT 1");
+        $st->execute([$userId]);
+        $r=$st->fetch(); return $r?:[]; 
+    }catch(Exception $e){ 
+        return []; 
+    }
 }
 
 /** Generic user creation (admin|instructor|student); creates students row if needed */
@@ -517,6 +505,9 @@ function createUserWithRole($data){
         }
         $pdo->commit();
         return ['success'=>true,'user_id'=>$uid,'role'=>$role];
-    }catch(Exception $e){ $pdo->rollBack(); return ['success'=>false,'error'=>$e->getMessage()]; }
+    }catch(Exception $e){ 
+        $pdo->rollBack(); 
+        return ['success'=>false,'error'=>$e->getMessage()]; 
+    }
 }
 }

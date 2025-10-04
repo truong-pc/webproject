@@ -37,11 +37,11 @@ if ($success) {
       
       <!-- Test Warning Banner -->
       <div class="alert test-warning mb-4">
-        <h6 class="alert-heading mb-2">⚠️ Test Account Creation Tool</h6>
-        <p class="mb-0">This tool is for testing purposes only. It allows creating accounts with different roles (Admin, Instructor, Student) to test the application functionality.</p>
+        <h6 class="alert-heading mb-2">⚠️ Account Creation Tool</h6>
+        <p class="mb-0">This tool is for account creation purposes only. It allows creating accounts with different roles (Admin, Instructor, Student) to test the application functionality.</p>
       </div>
 
-      <h1 class="h3 text-center mb-4">Create Test Account</h1>
+      <h1 class="h3 text-center mb-4">Create Account</h1>
       
       <?php if (!empty($errors)): ?>
         <div class="alert alert-danger">
@@ -71,7 +71,7 @@ if ($success) {
           <form method="post" action="">
             <div class="row g-3">
               
-              <!-- Role Selection - CHỈ CÒN 3 ROLES -->
+              <!-- Role Selection -->
               <div class="col-12">
                 <label class="form-label">Account Role <span class="text-danger">*</span></label>
                 <select class="form-select" name="role" required>
