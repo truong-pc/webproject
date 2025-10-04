@@ -157,3 +157,52 @@ function deleteVehicle(int $vehicleId): array {
         return ['success' => false, 'error' => $e->getMessage()];
     }
 }
+
+/**
+ * Fetches all active vehicles for selection.
+ *
+ * @return array
+ */
+function getAvailableVehicles(): array
+{
+    $pdo = db();
+    $sql = "SELECT id, plate_no, model FROM vehicles WHERE status = 'active' ORDER BY model, plate_no ASC";
+    try {
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        error_log("Error fetching available vehicles: " . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * Checks if a vehicle is already booked for a specific date and time.
+ *
+ * @param int $vehicleId
+ * @param string $date 'YYYY-MM-DD'
+ * @param string $timeOfDay 'morning', 'afternoon', 'evening'
+ * @return bool True if available, false if booked.
+ */
+function checkVehicleAvailability(int $vehicleId, string $date, string $timeOfDay): bool
+{
+    $pdo = db();
+    $sql = "SELECT COUNT(*) FROM lessons
+            WHERE vehicle_id = :vehicleId
+            AND day_booking = :day_booking
+            AND time_of_day = :time_of_day
+            AND status != 'cancelled'";
+    try {
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':vehicleId' => $vehicleId,
+            ':day_booking' => $date,
+            ':time_of_day' => $timeOfDay
+        ]);
+        return $stmt->fetchColumn() == 0;
+    } catch (Exception $e) {
+        error_log("Error checking vehicle availability: " . $e->getMessage());
+        return false; // Fail safe: assume not available on error
+    }
+}

@@ -40,7 +40,7 @@ body{ background: var(--g-50); color: var(--text); }
   position:absolute;
   inset:0;
   /* background: url('../img/header.jpg') center/cover no-repeat; */
-  z-index:-2;
+  z-index:0;
 }
 .navbar-green::after{
   content:"";
@@ -54,7 +54,12 @@ body{ background: var(--g-50); color: var(--text); }
 .navbar-green .navbar-brand { color:#fff; }
 .navbar-green .nav-link.active,
 .navbar-green .nav-link:focus,
-.navbar-green .nav-link:hover{ color:#ecfdf5; }
+.navbar-green .nav-link:hover{ color:#e5ec8b; }
+
+/* Custom dropdown width */
+.navbar-green .dropdown-menu {
+  width: fit-content;
+}
 
 /* Hero gradient xanh lá */
 .hero-green{
@@ -133,4 +138,306 @@ body{ background: var(--g-50); color: var(--text); }
 }
 .pagebar .actions .btn {
   white-space: nowrap;
+}
+
+
+/* ===== Utilities ===== */
+
+:root {
+
+    --light-gray: #F0F2F5;
+    --dark-gray: #333333;
+    --text-color: #333;
+    --white: #FFFFFF;
+    --accent-color: #00A9E0;
+
+    --page-bg-color: #F0F2F5;
+
+    --page-bg: var(--page-bg-color) var(--page-bg-img) center/cover fixed no-repeat;
+
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+h1,
+h2,
+h3 {
+    color: var(--primary-blue);
+}
+
+.section {
+    padding: 40px 0;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+/* ==== Glass card & layout tidy ==== */
+.section {
+    padding: 48px 0;
+}
+
+.section h2 {
+    text-align: center;
+}
+
+.section .grid-3 {
+    justify-items: center;
+}
+
+.grid-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 720px) {
+    .grid-3 {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+}
+
+.card--glass {
+    text-align: center;
+    position: relative;
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    transition: transform .15s ease, box-shadow .2s ease;
+}
+
+.card--glass:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+}
+
+.item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+}
+
+.item+.item {
+    margin-top: 16px;
+}
+
+.thumb {
+    width: 250px;
+    height: 192px;
+    border-radius: 18px;
+    object-fit: cover;
+    display: block;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .10);
+}
+
+.item h3 {
+    margin: 0 0 6px;
+    color: var(--primary-blue);
+}
+
+.item p {
+    margin: 0;
+    color: #444;
+}
+
+.container .section {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* ===== Testimonials ===== */
+.testimonials {
+    padding-bottom: 48px;
+}
+.testimonials .container {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+.section h2,
+.course-pro__heading,
+.testimonials h2 {
+    font-weight: bold;
+    font-size: clamp(28px, 3.2vw, 36px);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    color: var(--g-800);
+    text-align: center;
+    margin: 0 0 24px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, .4), 0 3px 10px rgba(0, 0, 0, .12);
+}
+
+
+.testimonial-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 32px;
+    margin: 0;
+    padding: 0;
+}
+
+.testimonial-card {
+    background: rgba(255, 255, 255, .12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, .26);
+    border-radius: 16px;
+    box-shadow: 0 10px 22px rgba(16, 24, 40, .12);
+    overflow: hidden;
+    position: relative;
+    isolation: isolate;
+}
+
+.testimonial-card:hover .testimonial-photo {
+    transform: translateY(1.05);
+    box-shadow: 0 10px 25px rgba(15, 45, 85, 0.15);
+}
+
+.testimonial-photo {
+    display: block;
+    background: transparent !important;
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 16px;
+    max-width: 100%;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, .18);
+}
+
+.testimonial-content {
+    background: transparent !important;
+    text-align: center;
+}
+
+.stars {
+    display: inline-flex;
+    justify-content: center;
+    gap: 2px;
+    font-size: 45px;
+    color: #f5b301;
+    margin: 12px auto 8px;
+    margin-bottom: 10px;
+}
+
+.testimonial-content blockquote {
+    line-height: 1.6;
+    color: #1b1f26;
+    font-size: 20px;
+    margin: 10px auto 8px;
+    max-width: 28ch;
+}
+
+.testimonial-content cite {
+    display: block;
+    margin-top: 6px;
+    font-style: italic;
+    color: #1f2937;
+}
+
+@media (max-width: 380px) {
+    .testimonial-card {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+/* --- Courses Page Styles --- */
+.course-pro {
+    margin: 48px auto;
+    max-width: 1200px;
+    padding: 0 16px
+}
+
+.course-pro__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 28px;
+}
+
+@media (max-width: 980px) {
+    .course-pro__grid {
+        grid-template-columns: repeat(2, 1fr)
+    }
+}
+
+@media (max-width: 540px) {
+    .course-pro__grid {
+        grid-template-columns: 1fr
+    }
+}
+
+.course-pro__card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.course-pro__media {
+    position: relative;
+    display: block;
+    border-radius: 14px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    box-shadow: 0 10px 22px rgba(16, 24, 40, .12);
+    transition: transform .25s ease, box-shadow .25s ease;
+    cursor: default;
+}
+
+.course-pro__media:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 30px rgba(16, 24, 40, .18);
+}
+
+.course-pro__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* overlay + title trắng đè trên ảnh */
+.course-pro__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, .55) 100%);
+}
+
+.course-pro__title {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 14px;
+    z-index: 1;
+    color: #fff;
+    font-weight: 600;
+    line-height: 1.15;
+    font-size: clamp(18px, 2.2vw, 24px);
+    letter-spacing: -0.01em;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, .35);
+}
+
+.course-pro__desc {
+    margin: 0;
+    color: #15171b;
+    text-align: center;
+    line-height: 1.6;
+    min-height: 3.2em;
 }
