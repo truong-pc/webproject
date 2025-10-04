@@ -12,6 +12,7 @@
   --g-200:#a7f3d0;
   --g-100:#d1fae5;
   --g-50:#ecfdf5;
+  --blue-300:#3bd1f6; /* link color */
 
   --text:#0f172a;
   --muted:#6b7280;
@@ -104,7 +105,7 @@ body{ background: var(--g-50); color: var(--text); }
 }
 
 /* Badge trạng thái */
-.badge.bg-info{ background-color: var(--g-400) !important; color:#064e3b; }
+.badge.bg-info{ background-color: var(--blue-300) !important; }
 .badge.bg-success{ background-color: var(--g-600) !important; }
 .badge.bg-warning{ background-color:#f59e0b !important; color:#111827; }
 

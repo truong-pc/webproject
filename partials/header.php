@@ -31,9 +31,9 @@ $currentUser = $isLoggedIn ? [
         <li class="nav-item"><a class="nav-link <?= active('students.php') ?>" href="students.php">Students</a></li>
         <li class="nav-item"><a class="nav-link <?= active('instructors.php') ?>" href="instructors.php">Instructors</a></li>
         <li class="nav-item"><a class="nav-link <?= active('vehicles.php') ?>" href="vehicles.php">Vehicles</a></li>
+        <li class="nav-item"><a class="nav-link <?= active('courses.php') ?>" href="courses.php">Courses</a></li>
         <li class="nav-item"><a class="nav-link <?= active('schedule.php') ?>" href="schedule.php">Schedule</a></li>
         <li class="nav-item"><a class="nav-link <?= active('invoices.php') ?>" href="invoices.php">Invoices</a></li>
-        <li class="nav-item"><a class="nav-link <?= active('reports.php') ?>" href="reports.php">Reports</a></li>
 
     <?php elseif ($role === 'instructor'): ?>
         <li class="nav-item"><a class="nav-link <?= active('index.php') ?>" href="index.php">Home</a></li>

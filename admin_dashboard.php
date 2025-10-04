@@ -104,7 +104,7 @@ $page_actions = [
             </div>
 
             <div class="col-lg-3 col-md-6">
-                <a href="reports.php" class="text-decoration-none card h-100 shadow-sm-hover">
+                <a href="invoices.php" class="text-decoration-none card h-100 shadow-sm-hover">
                     <div class="card-body">
                         <h6 class="card-subtitle mb-2 text-muted">Pending Invoices</h6>
                         <h2 class="card-title text-danger display-4 fw-bold"><?= $stats['pending_invoices'] ?></h2>
@@ -151,13 +151,13 @@ $page_actions = [
                 </div></div>
             </div>
 
-            <div class="col-md-6 col-lg-4">
+            <!-- <div class="col-md-6 col-lg-4">
                 <div class="card h-100"><div class="card-body">
                     <h5 class="card-title mb-3">Financial Reports & Invoices</h5>
                     <p class="card-text text-muted">Review financial summaries, create invoices, and check payment status.</p>
-                    <a href="reports.php" class="btn btn-primary w-100">View Financial Reports</a>
+                    <a href="#" class="btn btn-primary w-100">View Financial Reports</a>
                 </div></div>
-            </div>
+            </div> -->
 
             <div class="col-md-6 col-lg-4">
                 <div class="card h-100"><div class="card-body">

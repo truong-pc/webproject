@@ -84,7 +84,7 @@
                   <span class="badge bg-success-subtle text-success-emphasis rounded-pill mb-3">Reports</span>
                   <h5 class="card-title">Insightful Reports</h5>
                   <p class="card-text">Monitor student progress, instructor performance and financial trends to grow sustainably.</p>
-                  <a href="reports.php" class="btn btn-primary w-100">Go to Reports</a>
+                  <a href="admin_dashboard.php" class="btn btn-primary w-100">Go to Admin Dashboard</a>
                 </div>
               </div>
             </div>

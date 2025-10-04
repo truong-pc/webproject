@@ -510,4 +510,16 @@ function createUserWithRole($data){
         return ['success'=>false,'error'=>$e->getMessage()]; 
     }
 }
+
+/** Fetch all branches for selection lists. */
+function getBranches(): array {
+    $pdo = db();
+    try {
+        $stmt = $pdo->query("SELECT id, name FROM branches ORDER BY name ASC");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        // In a real app, you would log this error.
+        return [];
+    }
+}
 }

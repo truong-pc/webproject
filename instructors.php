@@ -107,13 +107,6 @@ $instructors = getInfoInstructors(100, 0);
     </div>
   </div>
 
-  <?php $hasMessages = !empty($messages['success']) || !empty($messages['error']); ?>
-  <?php if ($hasMessages): ?>
-    <div class="container mb-3 d-flex justify-content-end">
-      <button type="button" class="btn btn-primary" id="liveToastBtn">Show error or success</button>
-    </div>
-  <?php endif; ?>
-
   <div class="toast-container position-fixed top-0 end-0 p-3" id="messageToastContainer" style="z-index: 1080;">
     <?php foreach ($messages['success'] as $index => $message): ?>
       <div class="toast align-items-center text-bg-success border-0 auto-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4500">
@@ -301,7 +294,6 @@ $instructors = getInfoInstructors(100, 0);
     document.addEventListener('DOMContentLoaded', function () {
       const toastElements = Array.from(document.querySelectorAll('.auto-toast'));
       const toastInstances = toastElements.map((element) => new bootstrap.Toast(element));
-      const toastTriggerButton = document.getElementById('liveToastBtn');
 
       const showToasts = () => {
         toastInstances.forEach((instance) => instance.show());
@@ -309,11 +301,6 @@ $instructors = getInfoInstructors(100, 0);
 
       if (toastInstances.length > 0) {
         showToasts();
-        if (toastTriggerButton) {
-          toastTriggerButton.addEventListener('click', showToasts);
-        }
-      } else if (toastTriggerButton) {
-        toastTriggerButton.classList.add('d-none');
       }
 
       const modalElement = document.getElementById('instructorModal');
