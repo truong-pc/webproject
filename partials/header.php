@@ -38,7 +38,6 @@ $currentUser = $isLoggedIn ? [
     <?php elseif ($role === 'instructor'): ?>
         <li class="nav-item"><a class="nav-link <?= active('index.php') ?>" href="/webproject/instructor/index.php">Home</a></li>
         <li class="nav-item"><a class="nav-link <?= active('schedule.php') ?>" href="/webproject/instructor/schedule.php">My Schedule</a></li>
-        <li class="nav-item"><a class="nav-link <?= active('students.php') ?>" href="/webproject/instructor/students.php">Students Info</a></li>
 
     <?php elseif ($role === 'student'): ?>
         <li class="nav-item"><a class="nav-link <?= active('index.php') ?>" href="/webproject/student/index.php">Home</a></li>

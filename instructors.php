@@ -148,14 +148,13 @@ $instructors = getInfoInstructors(100, 0);
                 <th>Qualification</th>
                 <th class="text-center">Rating</th>
                 <th class="text-center">Courses</th>
-                <th class="text-center">Upcoming Lessons</th>
                 <th class="text-end">Actions</th>
               </tr>
             </thead>
             <tbody>
               <?php if (empty($instructors)): ?>
                 <tr>
-                  <td colspan="9" class="text-center text-muted">No instructors found.</td>
+                  <td colspan="8" class="text-center text-muted">No instructors found.</td>
                 </tr>
               <?php else: ?>
                 <?php foreach ($instructors as $index => $instructor): ?>
@@ -167,7 +166,6 @@ $instructors = getInfoInstructors(100, 0);
                     <td><?= htmlspecialchars($instructor['qualification'] ?? '—') ?></td>
                     <td class="text-center"><?= $instructor['rating_avg'] !== null ? number_format((float) $instructor['rating_avg'], 1) : '—' ?></td>
                     <td class="text-center"><?= (int) ($instructor['course_count'] ?? 0) ?></td>
-                    <td class="text-center"><?= (int) ($instructor['future_lessons'] ?? 0) ?></td>
                     <td class="text-end">
                       <div class="btn-group" role="group">
                         <button
@@ -182,7 +180,6 @@ $instructors = getInfoInstructors(100, 0);
                           data-instructor-qualification="<?= htmlspecialchars($instructor['qualification'] ?? '', ENT_QUOTES) ?>"
                           data-instructor-rating="<?= htmlspecialchars((string) ($instructor['rating_avg'] ?? ''), ENT_QUOTES) ?>"
                           data-instructor-courses="<?= (int) ($instructor['course_count'] ?? 0) ?>"
-                          data-instructor-lessons="<?= (int) ($instructor['future_lessons'] ?? 0) ?>"
                           data-instructor-created="<?= htmlspecialchars($instructor['created_at'] ?? '', ENT_QUOTES) ?>"
                         >View</button>
                         <button type="button" class="btn btn-sm btn-outline-danger" data-instructor-id="<?= (int) $instructor['id'] ?>" data-instructor-name="<?= htmlspecialchars($instructor['name']) ?>" onclick="confirmDeleteInstructor(this)">Delete</button>
@@ -208,7 +205,6 @@ $instructors = getInfoInstructors(100, 0);
     'qualification' => '',
     'rating_avg' => null,
     'course_count' => 0,
-    'future_lessons' => 0,
     'created_at' => null,
   ];
   $modalCreatedAt = $modalInstructor['created_at'] ?? null;
@@ -260,8 +256,6 @@ $instructors = getInfoInstructors(100, 0);
                 <dd class="col-sm-8" id="modalInstructorCreatedDisplay"><?= htmlspecialchars($modalCreatedDisplay) ?></dd>
                 <dt class="col-sm-4">Course Assignments</dt>
                 <dd class="col-sm-8" id="modalInstructorCoursesDisplay"><?= (int) ($modalInstructor['course_count'] ?? 0) ?></dd>
-                <dt class="col-sm-4">Upcoming Lessons</dt>
-                <dd class="col-sm-8" id="modalInstructorLessonsDisplay"><?= (int) ($modalInstructor['future_lessons'] ?? 0) ?></dd>
               </dl>
             </div>
           </div>
@@ -322,7 +316,6 @@ $instructors = getInfoInstructors(100, 0);
       const statRefs = {
         created: modalElement.querySelector('#modalInstructorCreatedDisplay'),
         courses: modalElement.querySelector('#modalInstructorCoursesDisplay'),
-        lessons: modalElement.querySelector('#modalInstructorLessonsDisplay'),
       };
 
       const formatDate = (value) => {
@@ -350,7 +343,6 @@ $instructors = getInfoInstructors(100, 0);
 
         statRefs.created.textContent = formatDate(data.created);
         statRefs.courses.textContent = Number.parseInt(data.courses ?? 0, 10) || 0;
-        statRefs.lessons.textContent = Number.parseInt(data.lessons ?? 0, 10) || 0;
       };
 
       const openInstructorModal = (data) => {
@@ -370,7 +362,6 @@ $instructors = getInfoInstructors(100, 0);
             rating: dataset.instructorRating || '',
             qualification: dataset.instructorQualification || '',
             courses: dataset.instructorCourses || 0,
-            lessons: dataset.instructorLessons || 0,
             created: dataset.instructorCreated || '',
           });
         });
@@ -386,7 +377,6 @@ $instructors = getInfoInstructors(100, 0);
         'rating' => $modalInstructor['rating_avg'] !== null ? (float) $modalInstructor['rating_avg'] : '',
         'qualification' => $modalInstructor['qualification'] ?? '',
         'courses' => (int) ($modalInstructor['course_count'] ?? 0),
-        'lessons' => (int) ($modalInstructor['future_lessons'] ?? 0),
         'created' => $modalInstructor['created_at'] ?? '',
       ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>);
       <?php endif; ?>
