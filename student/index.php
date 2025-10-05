@@ -158,7 +158,7 @@ $title = 'Student Dashboard';
             success: function(res) { //  KHÔNG JSON.parse(res) nữa
               if (res && res.success) {
                 clickedItem.removeClass('unread');
-                clickedItem.find('.badge').remove(); // bỏ chữ "New"
+                clickedItem.find('.badge').remove();
               } else {
                 console.error('Mark read failed:', res && res.message);
               }

@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_lesson'])) {
                         <tbody>
                             <?php if (empty($lessons)): ?>
                                 <tr>
-                                    <td colspan="7" class="text-center">You have no scheduled lessons.</td>
+                                    <td colspan="9" class="text-center">You have no scheduled lessons.</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($lessons as $lesson): ?>
@@ -174,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_lesson'])) {
                         </div>
                         <div class="row mb-3">
                             <label for="day_booking" class="col-sm-3 col-form-label">Date</label>
-                            <div class="col-sm-6">
+                            <div class="col-sm-8">
                                 <input type="date" class="form-control" id="day_booking" name="day_booking" required>
                             </div>
                         </div>
