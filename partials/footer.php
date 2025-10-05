@@ -5,4 +5,3 @@
     <p class="mb-0">This website was created for the final assessment of DWIN309 at Kent Institute Australia</p>
   </div>
 </footer>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
