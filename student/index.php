@@ -151,11 +151,9 @@ $title = 'Student Dashboard';
           $.ajax({
             url: '../handlers/mark_notification_read.php',
             type: 'POST',
-            dataType: 'json', //  để jQuery tự parse JSON
-            data: {
-              notification_id: notificationId
-            },
-            success: function(res) { //  KHÔNG JSON.parse(res) nữa
+            dataType: 'json',
+            data: { notification_id: notificationId },
+            success: function(res) {
               if (res && res.success) {
                 clickedItem.removeClass('unread');
                 clickedItem.find('.badge').remove();
@@ -170,23 +168,20 @@ $title = 'Student Dashboard';
         }
       });
 
-      // Handle "Back to Profile" button click
+      // Back to profile
       $('#back-to-profile').on('click', function() {
         $('#notification-content-display').hide();
         $('#account-details').show();
       });
 
-      // Handle Edit Profile button
+      // Enable editing
       $('#edit-profile-btn').on('click', function() {
-        $('#update-profile-form input:not([readonly])').prop('readonly', false);
-        $('#update-profile-form #name').prop('readonly', false);
-        $('#update-profile-form #phone').prop('readonly', false);
-        $('#update-profile-form #dob').prop('readonly', false);
+        $('#name, #phone, #dob').prop('readonly', false);
         $(this).hide();
         $('#save-profile-btn').show();
       });
 
-      // Handle Profile Update form submission
+      // Profile update
       $('#update-profile-form').on('submit', function(e) {
         e.preventDefault();
         $('#profile-update-message').empty();
@@ -194,31 +189,31 @@ $title = 'Student Dashboard';
         $.ajax({
           url: '../handlers/update_student_profile.php',
           type: 'POST',
+          dataType: 'json',
           data: $(this).serialize(),
-          success: function(response) {
-            var res = JSON.parse(response);
+          success: function(res) {
             var messageClass = res.success ? 'alert-success' : 'alert-danger';
             $('#profile-update-message').html('<div class="alert ' + messageClass + '">' + res.message + '</div>');
             if (res.success) {
-              $('#update-profile-form input:not([readonly])').prop('readonly', true);
-              $('#update-profile-form #name').prop('readonly', true);
-              $('#update-profile-form #phone').prop('readonly', true);
-              $('#update-profile-form #dob').prop('readonly', true);
+              $('#name, #phone, #dob').prop('readonly', true);
               $('#save-profile-btn').hide();
               $('#edit-profile-btn').show();
             }
+          },
+          error: function(xhr) {
+            console.error('Update profile error', xhr.responseText);
+            $('#profile-update-message').html('<div class="alert alert-danger">Error updating profile.</div>');
           }
         });
       });
 
-      // Handle password change form submission
+      // Change password
       $('#change-password-form').on('submit', function(e) {
         e.preventDefault();
         $('#password-change-message').empty();
 
         var newPassword = $('#new_password').val();
         var confirmNewPassword = $('#confirm_new_password').val();
-
         if (newPassword !== confirmNewPassword) {
           $('#password-change-message').html('<div class="alert alert-danger">New passwords do not match.</div>');
           return;
@@ -227,14 +222,18 @@ $title = 'Student Dashboard';
         $.ajax({
           url: '../handlers/change_password_handler.php',
           type: 'POST',
+          dataType: 'json',
           data: $(this).serialize(),
-          success: function(response) {
-            var res = JSON.parse(response);
+          success: function(res) {
             var messageClass = res.success ? 'alert-success' : 'alert-danger';
             $('#password-change-message').html('<div class="alert ' + messageClass + '">' + res.message + '</div>');
             if (res.success) {
               $('#change-password-form')[0].reset();
             }
+          },
+          error: function(xhr) {
+            console.error('Password change error', xhr.responseText);
+            $('#password-change-message').html('<div class="alert alert-danger">Error changing password.</div>');
           }
         });
       });

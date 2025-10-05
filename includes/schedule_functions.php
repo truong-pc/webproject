@@ -372,4 +372,87 @@ function getAllVehicles(): array
         return [];
     }
 }
+
+/**
+ * Fetch lessons assigned to a specific instructor.
+ *
+ * @param int $instructorId
+ * @return array
+ */
+function getInstructorLessons(int $instructorId): array
+{
+    $pdo = db();
+    $sql = "SELECT 
+                l.id,
+                l.day_booking,
+                l.time_of_day,
+                l.status,
+                l.student_id,
+                s.name AS student_name,
+                c.title AS course_title,
+                v.plate_no AS vehicle_plate
+            FROM lessons l
+            JOIN users s ON l.student_id = s.id
+            LEFT JOIN courses c ON l.course_id = c.id
+            LEFT JOIN vehicles v ON l.vehicle_id = v.id
+            WHERE l.instructor_id = :instructorId
+            ORDER BY l.day_booking DESC, l.time_of_day ASC";
+    try {
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':instructorId', $instructorId, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        error_log('Error fetching instructor lessons: ' . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * Update only the status of a lesson ensuring the instructor owns the lesson.
+ * Handles related invoice status similar to updateLessonAndInvoice logic.
+ *
+ * @param int $lessonId
+ * @param int $instructorId
+ * @param string $newStatus Allowed: scheduling, scheduled, completed, cancelled
+ * @return bool
+ */
+function updateLessonStatus(int $lessonId, int $instructorId, string $newStatus): bool
+{
+    $allowed = ['scheduling', 'scheduled', 'completed', 'cancelled'];
+    if (!in_array($newStatus, $allowed, true)) {
+        return false;
+    }
+
+    $pdo = db();
+    try {
+        // Verify ownership & fetch needed info
+        $check = $pdo->prepare("SELECT student_id, course_id FROM lessons WHERE id = :id AND instructor_id = :instructorId LIMIT 1");
+        $check->execute([':id' => $lessonId, ':instructorId' => $instructorId]);
+        $lesson = $check->fetch(PDO::FETCH_ASSOC);
+        if (!$lesson) {
+            return false; // Not found or not owned
+        }
+
+        $pdo->beginTransaction();
+        $upd = $pdo->prepare("UPDATE lessons SET status = :status WHERE id = :id");
+        $upd->execute([':status' => $newStatus, ':id' => $lessonId]);
+
+        // Invoice status handling
+        if ($newStatus === 'cancelled') {
+            $invoiceUpd = $pdo->prepare("UPDATE invoices SET status = 'cancelled' WHERE student_id = :student_id AND course_id = :course_id AND status != 'paid'");
+            $invoiceUpd->execute([':student_id' => $lesson['student_id'], ':course_id' => $lesson['course_id']]);
+        } else {
+            $invoiceUpd = $pdo->prepare("UPDATE invoices SET status = 'pending' WHERE student_id = :student_id AND course_id = :course_id AND status NOT IN ('paid')");
+            $invoiceUpd->execute([':student_id' => $lesson['student_id'], ':course_id' => $lesson['course_id']]);
+        }
+
+        $pdo->commit();
+        return true;
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        error_log('Error updating lesson status: ' . $e->getMessage());
+        return false;
+    }
+}
 ?>
