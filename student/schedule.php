@@ -19,6 +19,16 @@ $allCoursesForBooking = getAllCoursesForBooking();
 $allBranches = getBranches();
 $availableVehicles = getAvailableVehicles();
 
+// Helper to get badge change type button (color) class  for status
+function get_status_badge_class($status) {
+        switch ($status) {
+            case 'scheduled': return 'info';
+            case 'completed': return 'success';
+            case 'cancelled': return 'danger';
+            case 'scheduling': return 'warning';
+            default: return 'secondary';
+        }
+    }
 
 // Handle form submission
 $bookingResult = null;
@@ -91,8 +101,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_lesson'])) {
                 <?php endif; ?>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
-                        <thead class="table-dark">
+                        <thead class="table-info">
                             <tr>
+                                <th>ID</th>
                                 <th>Date</th>
                                 <th>Time of Day</th>
                                 <th>Course</th>
@@ -110,13 +121,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_lesson'])) {
                             <?php else: ?>
                                 <?php foreach ($lessons as $lesson): ?>
                                     <tr>
+                                        <td><?= htmlspecialchars($lesson['id']) ?></td>
                                         <td><?= htmlspecialchars($lesson['day_booking']) ?></td>
                                         <td><?= htmlspecialchars(ucfirst($lesson['time_of_day'])) ?></td>
                                         <td><?= htmlspecialchars($lesson['course_title']) ?></td>
                                         <td><?= htmlspecialchars($lesson['instructor_name']) ?></td>
                                         <td><?= htmlspecialchars($lesson['vehicle_plate'] ?? 'N/A') ?></td>
                                         <td><?= htmlspecialchars($lesson['branch_name'] ?? 'N/A') ?></td>
-                                        <td><span class="badge bg-info text-dark"><?= htmlspecialchars(ucfirst($lesson['status'])) ?></span></td>
+                                        <td><span class="badge bg-<?= get_status_badge_class($lesson['status']) ?>"><?= htmlspecialchars(ucfirst($lesson['status'])) ?></span></td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php endif; ?>
@@ -210,10 +222,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_lesson'])) {
     </div>
 
     <?php include __DIR__ . '/../partials/footer.php'; ?>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
 
 
     <script>

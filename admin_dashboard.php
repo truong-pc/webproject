@@ -23,26 +23,15 @@ if ($role !== 'admin') {
 }
 
 // ----------------------------------------------------
-// 2. Lấy dữ liệu Tổng quan (Placeholder/Giả định)
+// 2. Lấy dữ liệu Tổng quan
 // ----------------------------------------------------
-// TODO: Thay thế bằng các hàm truy vấn DB thực tế từ functions.php
-$stats = [
-    'total_students' => 145,
-    'total_instructors' => 12,
-    'pending_invoices' => 24,
-    'vehicles_in_maintenance' => 2,
-    'pending_license_checks' => 18,
-];
+$stats = getDashboardStats();
 
 // ----------------------------------------------------
 // 3. Cấu hình Tiêu đề Trang
 // ----------------------------------------------------
 $page_title = 'Welcome, Admin ' . htmlspecialchars($currentUser['name']);
 $page_subtitle = 'System Overview and Quick Access Panel';
-$page_actions = [
-    ['href'=>'schedule.php','text'=>'+ New Course','class'=>'btn btn-success'],
-    ['href'=>'invoices.php','text'=>'+ New Invoice','class'=>'btn btn-outline-primary']
-];
 
 ?>
 <!doctype html>
@@ -66,15 +55,6 @@ $page_actions = [
             <p class="subtitle"><?= htmlspecialchars($page_subtitle) ?></p>
         <?php endif; ?>
         </div>
-        <?php if (!empty($page_actions) && is_array($page_actions)): ?>
-        <div class="actions d-flex gap-2">
-            <?php foreach($page_actions as $btn): ?>
-            <a href="<?= htmlspecialchars($btn['href'] ?? '#') ?>" class="<?= htmlspecialchars($btn['class'] ?? 'btn btn-primary') ?>">
-                <?= htmlspecialchars($btn['text'] ?? 'Action') ?>
-            </a>
-            <?php endforeach; ?>
-        </div>
-        <?php endif; ?>
     </div>
     </div>
 
@@ -106,19 +86,19 @@ $page_actions = [
             <div class="col-lg-3 col-md-6">
                 <a href="invoices.php" class="text-decoration-none card h-100 shadow-sm-hover">
                     <div class="card-body">
-                        <h6 class="card-subtitle mb-2 text-muted">Pending Invoices</h6>
-                        <h2 class="card-title text-danger display-4 fw-bold"><?= $stats['pending_invoices'] ?></h2>
+                        <h6 class="card-subtitle mb-2 text-muted">Total Invoices</h6>
+                        <h2 class="card-title text-danger display-4 fw-bold"><?= $stats['total_invoices'] ?></h2>
                         <p class="card-text">Check payments and reports</p>
                     </div>
                 </a>
             </div>
 
             <div class="col-lg-3 col-md-6">
-                <a href="students.php" class="text-decoration-none card h-100 shadow-sm-hover">
+                <a href="invoices.php" class="text-decoration-none card h-100 shadow-sm-hover">
                     <div class="card-body">
-                        <h6 class="card-subtitle mb-2 text-muted">Pending License Checks</h6>
-                        <h2 class="card-title text-warning text-dark display-4 fw-bold"><?= $stats['pending_license_checks'] ?></h2>
-                        <p class="card-text">Manage license verification</p>
+                        <h6 class="card-subtitle mb-2 text-muted">Total Revenue</h6>
+                        <h2 class="card-title text-warning text-dark display-4 fw-bold">$<?= $stats['total_revenue'] ?></h2>
+                        <p class="card-text">Manage invoice and payment</p>
                     </div>
                 </a>
             </div>
@@ -172,5 +152,6 @@ $page_actions = [
     </main>
 
     <?php include __DIR__.'/partials/footer.php'; ?>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

@@ -36,63 +36,6 @@
           <p class="text-muted mb-0">Streamline admin, keep instructors organised and help students hit the road faster.</p>
         </div>
 
-        <div class="row g-4">
-          <div class="col-lg-4 col-md-6">
-            <div class="card h-100 border-0 shadow-sm">
-              <div class="card-body text-center p-4">
-                <span class="badge bg-success-subtle text-success-emphasis rounded-pill mb-3">Students</span>
-                <h5 class="card-title">Learner Profiles</h5>
-                <p class="card-text">Capture personal details, log hours, track competencies and review lesson history at a glance.</p>
-                <a href="students.php" class="btn btn-primary w-100">Go to Students</a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6">
-            <div class="card h-100 border-0 shadow-sm">
-              <div class="card-body text-center p-4">
-                <span class="badge bg-success-subtle text-success-emphasis rounded-pill mb-3">Instructors</span>
-                <h5 class="card-title">Team Management</h5>
-                <p class="card-text">See credentials, availability and feedback so you can match students with the right instructor.</p>
-                <a href="instructors.php" class="btn btn-primary w-100">Go to Instructors</a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6">
-            <div class="card h-100 border-0 shadow-sm">
-              <div class="card-body text-center p-4">
-                <span class="badge bg-success-subtle text-success-emphasis rounded-pill mb-3">Schedule</span>
-                <h5 class="card-title">Smart Booking</h5>
-                <p class="card-text">Coordinate lessons, manage reschedules and stay on top of upcoming sessions with ease.</p>
-                <a href="schedule.php" class="btn btn-primary w-100">Go to Schedule</a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-6 col-md-6">
-            <div class="card h-100 border-0 shadow-sm">
-              <div class="card-body text-center p-4">
-                <span class="badge bg-success-subtle text-success-emphasis rounded-pill mb-3">Invoices</span>
-                <h5 class="card-title">Billing & Payments</h5>
-                <p class="card-text">Generate invoices, record payments and keep balances clean for every learner and package.</p>
-                <a href="invoices.php" class="btn btn-primary w-100">Go to Invoices</a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-6 col-md-6">
-            <div class="card h-100 border-0 shadow-sm">
-              <div class="card-body text-center p-4">
-                <span class="badge bg-success-subtle text-success-emphasis rounded-pill mb-3">Reports</span>
-                <h5 class="card-title">Insightful Reports</h5>
-                <p class="card-text">Monitor student progress, instructor performance and financial trends to grow sustainably.</p>
-                <a href="admin_dashboard.php" class="btn btn-primary w-100">Go to Admin Dashboard</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </section>
 
     <section class="py-5" style="background: linear-gradient(135deg, var(--g-100), var(--g-50));">
@@ -284,6 +227,7 @@
   </main>
 
   <?php include __DIR__ . '/partials/footer.php'; ?>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

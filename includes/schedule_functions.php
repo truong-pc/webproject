@@ -4,7 +4,6 @@ require_once __DIR__ . '/functions.php';
 /**
  * Schedule-related database functions.
  */
-
 /**
  * Fetches all scheduled lessons for a specific student.
  *
@@ -142,7 +141,7 @@ function bookLesson(array $data): array
     }
 
     // 2. Validate vehicle availability
-    if (!checkVehicleAvailability($data['vehicle_id'], $data['day_booking'], $data['time_of_day'])) {
+    if (!empty($data['vehicle_id']) && !checkVehicleIsUsed($data['vehicle_id'], $data['day_booking'], $data['time_of_day'])) {
         return ['success' => false, 'message' => 'The selected vehicle is not available at that time. Please choose a different vehicle.'];
     }
 
@@ -151,7 +150,7 @@ function bookLesson(array $data): array
 
         // 3. Insert the new lesson
         $lessonSql = "INSERT INTO lessons (student_id, course_id, instructor_id, branch_id, vehicle_id, day_booking, time_of_day, status)
-                      VALUES (:student_id, :course_id, :instructor_id, :branch_id, :vehicle_id, :day_booking, :time_of_day, 'scheduling')";
+                      VALUES (:student_id, :course_id, :instructor_id, :branch_id, :vehicle_id, :day_booking, :time_of_day, 'scheduled')";
         $lessonStmt = $pdo->prepare($lessonSql);
         $lessonStmt->execute([
             ':student_id' => $data['student_id'],
@@ -183,8 +182,8 @@ function bookLesson(array $data): array
             ':student_id' => $data['student_id'],
             ':course_id' => $data['course_id'],
             ':total' => $coursePrice,
-            ':balance' => $coursePrice,
-            ':notes' => 'Invoice automatically generated for new lesson booking (Lesson ID: ' . $lessonId . ')'
+            ':balance' => 0.00,
+            ':notes' => 'Invoice for lesson booking ID: ' . $lessonId
         ]);
 
         $pdo->commit();
@@ -192,7 +191,185 @@ function bookLesson(array $data): array
     } catch (Exception $e) {
         $pdo->rollBack();
         error_log("Error booking lesson: " . $e->getMessage());
-        return ['success' => false, 'message' => 'An error occurred while booking the lesson. Please try again. Details: ' . $e->getMessage()];
+        return ['success' => false, 'message' => 'An error occurred while booking the lesson. Please try again.'];
+    }
+}
+
+
+/**
+ * Checks if a vehicle is available at a specific date and time.
+ *
+ * @param int|null $vehicleId
+ * @param string $date
+ * @param string $timeOfDay
+ * @return boolean
+ */
+function checkVehicleIsUsed(?int $vehicleId, string $date, string $timeOfDay): bool
+{
+    if ($vehicleId === null) {
+        return true; // No vehicle assigned, so it's "available"
+    }
+    $pdo = db();
+    $sql = "SELECT COUNT(*) FROM lessons
+            WHERE vehicle_id = :vehicleId
+            AND day_booking = :day_booking
+            AND time_of_day = :time_of_day
+            AND status NOT IN ('cancelled', 'completed')";
+    try {
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':vehicleId' => $vehicleId,
+            ':day_booking' => $date,
+            ':time_of_day' => $timeOfDay
+        ]);
+        return $stmt->fetchColumn() == 0;
+    } catch (Exception $e) {
+        error_log("Error checking vehicle availability: " . $e->getMessage());
+        return false; // Fail safe
+    }
+}
+
+
+/**
+ * Fetches all lessons.
+ *
+ * @return array An array of all lessons with details.
+ */
+function getAllLessons(): array
+{
+    $pdo = db();
+    $sql = "SELECT 
+                l.id, 
+                l.day_booking, 
+                l.time_of_day, 
+                l.status, 
+                s.name as student_name, 
+                i.name as instructor_name, 
+                v.plate_no as vehicle_plate,
+                l.student_id,
+                l.instructor_id,
+                l.vehicle_id,
+                l.course_id,
+                c.title
+            FROM lessons l
+            JOIN users s ON l.student_id = s.id
+            JOIN users i ON l.instructor_id = i.id
+            LEFT JOIN vehicles v ON l.vehicle_id = v.id
+            LEFT JOIN courses c ON l.course_id = c.id
+            ORDER BY l.day_booking DESC, l.time_of_day ASC";
+    try {
+        $stmt = $pdo->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        error_log("Error fetching all lessons: " . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * Updates a lesson and its corresponding invoice.
+ *
+ * @param int $lesson_id
+ * @param array $data
+ * @return bool True on success, false on failure.
+ */
+function updateLessonAndInvoice(int $lesson_id, array $data): bool
+{
+    $pdo = db();
+    $pdo->beginTransaction();
+    try {
+        // Update lesson
+        $sql = "UPDATE lessons SET 
+                    day_booking = :day_booking, 
+                    time_of_day = :time_of_day, 
+                    instructor_id = :instructor_id, 
+                    vehicle_id = :vehicle_id, 
+                    status = :status 
+                WHERE id = :lesson_id";
+        $stmt = $pdo->prepare($sql);
+        
+        // Handle null vehicle_id
+        $vehicle_id = !empty($data['vehicle_id']) ? $data['vehicle_id'] : null;
+
+        $params = [
+            ':day_booking' => $data['day_booking'],
+            ':time_of_day' => $data['time_of_day'],
+            ':instructor_id' => $data['instructor_id'],
+            ':vehicle_id' => $vehicle_id,
+            ':status' => $data['status'],
+            ':lesson_id' => $lesson_id
+        ];
+        $stmt->execute($params);
+
+        // If lesson is cancelled, find and cancel the corresponding invoice
+        if ($data['status'] === 'cancelled') {
+            $lesson_course_stmt = $pdo->prepare("SELECT course_id, student_id FROM lessons WHERE id = ?");
+            $lesson_course_stmt->execute([$lesson_id]);
+            $lesson_info = $lesson_course_stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($lesson_info) {
+                $invoice_sql = "UPDATE invoices SET status = 'cancelled' 
+                                WHERE student_id = ? AND course_id = ? AND status != 'paid'";
+                $invoice_stmt = $pdo->prepare($invoice_sql);
+                $invoice_stmt->execute([$lesson_info['student_id'], $lesson_info['course_id']]);
+            }
+        } elseif ($data['status'] !== 'cancelled') {
+            // If the lesson status is changed to something other than 'cancelled' (e.g., rescheduled),
+            // ensure the corresponding invoice is set to 'pending' so it can be processed.
+            $lesson_course_stmt = $pdo->prepare("SELECT course_id, student_id FROM lessons WHERE id = ?");
+            $lesson_course_stmt->execute([$lesson_id]);
+            $lesson_info = $lesson_course_stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($lesson_info) {
+                // Find the related invoice and update its status to 'pending'
+                // This applies if the invoice was previously 'cancelled' or another state, but not yet 'paid'.
+                $invoice_sql = "UPDATE invoices SET status = 'pending' 
+                                WHERE student_id = ? AND course_id = ? AND status != 'paid'";
+                $invoice_stmt = $pdo->prepare($invoice_sql);
+                $invoice_stmt->execute([$lesson_info['student_id'], $lesson_info['course_id']]);
+            }
+        }
+
+        $pdo->commit();
+        return true;
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        error_log("Error updating lesson and invoice: " . $e->getMessage());
+        return false;
+    }
+}
+
+/**
+ * Fetches all active instructors.
+ *
+ * @return array An array of active instructors.
+ */
+function getAllInstructors(): array
+{
+    $pdo = db();
+    try {
+        $stmt = $pdo->query("SELECT id, name FROM users WHERE role = 'instructor' AND status = 'active'");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        error_log("Error fetching all instructors: " . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * Fetches all active vehicles.
+ *
+ * @return array An array of active vehicles.
+ */
+function getAllVehicles(): array
+{
+    $pdo = db();
+    try {
+        $stmt = $pdo->query("SELECT id, plate_no, model FROM vehicles WHERE status = 'active'");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        error_log("Error fetching all vehicles: " . $e->getMessage());
+        return [];
     }
 }
 ?>

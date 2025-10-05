@@ -99,6 +99,21 @@ if (!function_exists('safeSessionStart')) {
         session_destroy();
     }
 
+    /** Get user details by ID */
+    function get_user_by_id($user_id)
+    {
+        $pdo = db();
+        // Also fetch student-specific details if they exist
+        $stmt = $pdo->prepare("
+            SELECT u.*, s.license_status, s.notes_summary, s.address
+            FROM users u
+            LEFT JOIN students s ON u.id = s.user_id
+            WHERE u.id = ?
+        ");
+        $stmt->execute([$user_id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     /** Return associative array of current user or null */
     function getCurrentUser()
     {
@@ -567,5 +582,49 @@ if (!function_exists('safeSessionStart')) {
             // In a real app, you would log this error.
             return [];
         }
+    }
+
+    /**
+     * Fetches statistics for the admin dashboard.
+     * @return array An associative array of dashboard statistics.
+     */
+    function getDashboardStats(): array
+    {
+        $pdo = db();
+        $stats = [
+            'total_students' => 0,
+            'total_instructors' => 0,
+            'total_invoices' => 0,
+            'vehicles_in_maintenance' => 0,
+            'total_revenue' => 0,
+        ];
+
+        try {
+            // Total students
+            $stmt = $pdo->query("SELECT COUNT(id) FROM users WHERE role = 'student'");
+            $stats['total_students'] = (int) $stmt->fetchColumn();
+
+            // Total instructors
+            $stmt = $pdo->query("SELECT COUNT(id) FROM users WHERE role = 'instructor'");
+            $stats['total_instructors'] = (int) $stmt->fetchColumn();
+
+            // Total invoices
+            $stmt = $pdo->query("SELECT COUNT(id) FROM invoices");
+            $stats['total_invoices'] = (int) $stmt->fetchColumn();
+
+            // Total revenue from paid invoices
+            $stmt = $pdo->query("SELECT SUM(amount) FROM payments");
+            $stats['total_revenue'] = (float) $stmt->fetchColumn();
+
+            // Vehicles in maintenance
+            $stmt = $pdo->query("SELECT COUNT(id) FROM vehicles WHERE status = 'maintenance'");
+            $stats['vehicles_in_maintenance'] = (int) $stmt->fetchColumn();
+
+        } catch (Exception $e) {
+            // In a real app, you would log this error.
+            // For now, we return the zeroed-out array.
+        }
+
+        return $stats;
     }
 }

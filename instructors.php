@@ -281,6 +281,7 @@ $instructors = getInfoInstructors(100, 0);
     <input type="hidden" name="instructor_id" id="deleteInstructorId" value="">
   </form>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     function confirmDeleteInstructor(button) {
       const instructorId = button.getAttribute('data-instructor-id');

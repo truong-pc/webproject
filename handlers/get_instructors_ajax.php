@@ -1,5 +1,5 @@
 <?php
-// tìm kiếm giáo viên theo khóa học đã chọn  
+// logic tìm kiếm giảng viên theo từng khóa học
 // handlers/get_instructors_ajax.php 
 require_once __DIR__ . '/../includes/schedule_functions.php';
 
